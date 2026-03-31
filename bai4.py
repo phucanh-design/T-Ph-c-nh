@@ -1,43 +1,80 @@
-# Bài 4. Viết hàm xử lý dữ liệu sinh viên
+import numpy as np
 
-def nhap_danh_sach():
-    # Giả lập nhập danh sách, trả về danh sách mẫu
-    return [
-        ("SV01", "Nguyễn Văn A", 8.5),
-        ("SV02", "Trần Thị B", 7.0),
-        ("SV03", "Lê Văn C", 9.0)
-    ]
+print("=" * 70)
+print("BÀI 4: QUẢN LÝ TỒN KHO VÀ ĐỀ XUẤT NHẬP HÀNG")
+print("=" * 70)
 
-def tinh_diem_trung_binh(ds):
-    if not ds:
-        return 0
-    return sum(sv[2] for sv in ds) / len(ds)
+# Dữ liệu đầu vào
+stock = np.array([35, 8, 12, 5, 40, 18, 7, 22, 9, 15])
+min_stock = np.array([20, 15, 15, 10, 25, 20, 12, 18, 12, 15])
+price = np.array([30, 25, 28, 22, 35, 20, 18, 24, 19, 21])
 
-def tim_sv_max(ds):
-    if not ds:
-        return None
-    return max(ds, key=lambda x: x[2])
+print("\nDỮ LIỆU ĐẦU VÀO:")
+print("-" * 70)
+print("Tồn kho hiện tại:", stock)
+print("Mức tồn tối thiểu:", min_stock)
+print("Giá nhập dự kiến:", price)
 
-def xep_loai(diem):
-    if diem >= 8:
-        return 'A'
-    elif diem >= 6.5:
-        return 'B'
-    elif diem >= 5:
-        return 'C'
-    else:
-        return 'F'
+# 1. Xác định các mặt hàng đang thiếu so với mức tối thiểu
+print("\n1. CÁC MẶT HÀNG ĐANG THIẾU:")
+print("-" * 70)
+need_import = np.maximum(min_stock - stock, 0)
+print("Số lượng cần nhập thêm:", need_import)
+deficient_items = np.where(need_import > 0)[0]
+print("Mặt hàng thiếu (chỉ số):", deficient_items + 1)  # +1 để hiển thị từ 1
 
-def in_bao_cao(ds):
-    print("Báo cáo tổng hợp:")
-    print(f"Số sinh viên: {len(ds)}")
-    print(f"Điểm trung bình: {tinh_diem_trung_binh(ds):.2f}")
-    max_sv = tim_sv_max(ds)
-    if max_sv:
-        print(f"Sinh viên điểm cao nhất: {max_sv[0]} - {max_sv[1]} ({max_sv[2]})")
-    for sv in ds:
-        print(f"{sv[0]}: {xep_loai(sv[2])}")
+# 2. Tính số lượng cần nhập thêm cho từng mặt hàng (đã tính ở trên)
 
-# Chương trình chính
-ds = nhap_danh_sach()
-in_bao_cao(ds)
+# 3. Chỉ tính chi phí nhập thêm cho các mặt hàng thiếu
+print("\n3. CHI PHÍ NHẬP THÊM CHO MẶT HÀNG THIẾU:")
+print("-" * 70)
+cost = need_import * price
+print("Chi phí nhập cho từng mặt hàng:", cost)
+
+# 4. Tính tổng chi phí nhập hàng
+print("\n4. TỔNG CHI PHÍ NHẬP HÀNG:")
+print("-" * 70)
+total_cost = cost.sum()
+print(f"Tổng chi phí: {total_cost}")
+
+# 5. Phân loại trạng thái mỗi mặt hàng
+print("\n5. TRẠNG THÁI MỖI MẶT HÀNG:")
+print("-" * 70)
+status = np.where(stock < min_stock, "Thiếu hàng", "Đủ hàng")
+for i, stat in enumerate(status):
+    print(f"Mặt hàng {i+1}: {stat}")
+
+# 6. Tìm 3 mặt hàng thiếu nhiều nhất
+print("\n6. 3 MẶT HÀNG THIẾU NHIỀU NHẤT:")
+print("-" * 70)
+top3_shortage = np.argsort(need_import)[::-1][:3]
+print("Chỉ số mặt hàng thiếu nhiều nhất:", top3_shortage + 1)
+print("Số lượng thiếu tương ứng:", need_import[top3_shortage])
+
+# 7. Giới hạn số lượng nhập tối đa mỗi mặt hàng là 20 đơn vị
+print("\n7. GIỚI HẠN SỐ LƯỢNG NHẬP TỐI ĐA 20 ĐƠN VỊ:")
+print("-" * 70)
+limited_need = np.clip(need_import, 0, 20)
+print("Số lượng cần nhập sau giới hạn:", limited_need)
+
+# 8. Tính lại tổng chi phí sau khi giới hạn lượng nhập
+print("\n8. TỔNG CHI PHÍ SAU KHI GIỚI HẠN:")
+print("-" * 70)
+limited_total_cost = (limited_need * price).sum()
+print(f"Tổng chi phí sau giới hạn: {limited_total_cost}")
+
+# 9. Nhận xét ngắn về mức độ thiếu hụt của kho
+print("\n9. NHẬN XÉT VỀ MỨC ĐỘ THIẾU HỤT:")
+print("-" * 70)
+total_shortage = need_import.sum()
+num_deficient = len(deficient_items)
+print(f"Tổng số mặt hàng thiếu: {num_deficient}/10")
+print(f"Tổng số lượng thiếu: {total_shortage} đơn vị")
+print(f"Tổng chi phí nhập ban đầu: {total_cost}")
+print(f"Tổng chi phí sau giới hạn: {limited_total_cost}")
+if num_deficient > 5:
+    print("Nhận xét: Kho hàng đang trong tình trạng thiếu hụt nghiêm trọng, cần nhập hàng khẩn cấp.")
+elif num_deficient > 2:
+    print("Nhận xét: Kho hàng thiếu một số mặt hàng, cần bổ sung kịp thời.")
+else:
+    print("Nhận xét: Kho hàng tương đối ổn định, chỉ thiếu một vài mặt hàng.")

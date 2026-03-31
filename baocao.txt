@@ -1,4 +1,0 @@
-Số lượng sinh viên: 5
-Điểm trung bình: 7.80
-Số sinh viên đạt: 5
-Số sinh viên không đạt: 0
