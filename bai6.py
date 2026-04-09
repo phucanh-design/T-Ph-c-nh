@@ -1,29 +1,24 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 6: BÀI TẬP TỔNG HỢP")
-print("=" * 70)
 
-df = pd.read_csv("diem_sinhvien.csv")
-df["DiemTB"] = 0.4 * df["DiemQT"] + 0.6 * df["DiemThi"]
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "inventory.xlsx"
 
-def xep_loai(diem):
-    if diem >= 8.5:
-        return "Gioi"
-    elif diem >= 7.0:
-        return "Kha"
-    elif diem >= 5.5:
-        return "Trung binh"
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    df_hanghoa = pd.read_excel(path, sheet_name="HangHoa")
+    print("=== Bai 6: inventory.xlsx / sheet HangHoa ===")
+    print(df_hanghoa.head(10))
+
+    possible_qty_cols = ["TonKho", "SoLuongTon", "SoLuong", "Quantity"]
+    qty_col = next((c for c in possible_qty_cols if c in df_hanghoa.columns), None)
+
+    if qty_col is None:
+        print("Khong tim thay cot ton kho de loc dieu kien < 20")
     else:
-        return "Yeu"
-
-print("\nTạo cột XepLoai:")
-df["XepLoai"] = df["DiemTB"].apply(xep_loai)
-
-ket_qua = df[df["XepLoai"].isin(["Gioi", "Kha"])]
-ket_qua = ket_qua.sort_values(by="DiemTB", ascending=False)
-ket_qua.to_csv("ketqua_xuly.csv", index=False, encoding="utf-8-sig")
-
-print("\nDanh sách sinh viên loại Khá trở lên (theo DiemTB giảm dần):")
-print(ket_qua)
-print("\nĐã lưu file ketqua_xuly.csv")
+        low_stock_df = df_hanghoa[df_hanghoa[qty_col] < 20].copy()
+        print(f"\nMat hang ton kho < 20 theo cot '{qty_col}':")
+        print(low_stock_df)

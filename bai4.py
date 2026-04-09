@@ -1,30 +1,22 @@
-﻿import pandas as pd
+from pathlib import Path
 
-print('=' * 70)
-print('BÀI 4: LỌC DỮ LIỆU, THÊM CỘT, ĐỔI TÊN VÀ ĐẶT INDEX')
-print('=' * 70)
+import pandas as pd
 
-df = pd.read_csv('diem_sinhvien.csv')
-df['DiemTB'] = 0.4 * df['DiemQT'] + 0.6 * df['DiemThi']
 
-def xep_loai(diem):
-    if diem >= 8.5:
-        return 'Gioi'
-    elif diem >= 7.0:
-        return 'Kha'
-    elif diem >= 5.5:
-        return 'Trung binh'
-    else:
-        return 'Yeu'
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "customers.csv"
 
-print('\nSinh viên có DiemTB >= 8:')
-df['XepLoai'] = df['DiemTB'].apply(xep_loai)
-print(df[df['DiemTB'] >= 8])
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    df = pd.read_csv(path, dtype={"MaKH": "string"})
 
-df = df.rename(columns={'HoTen': 'TenSinhVien'})
-df = df.set_index('MaSV')
+    print("=== Bai 4: customers.csv ===")
+    print(df.head())
+    print("\nKieu du lieu tung cot:")
+    print(df.dtypes)
 
-print('\nDataFrame sau khi đổi tên cột và đặt MaSV làm index:')
-print(df)
-
-print('\n' + '=' * 70)
+    print(
+        "\nGiai thich: MaKH nen la chuoi de giu so 0 o dau, "
+        "va tranh bi xem nhu so dung de tinh toan."
+    )

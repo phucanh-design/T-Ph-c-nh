@@ -1,25 +1,32 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 8: QUẢN LÝ HÓA ĐƠN BÁN HÀNG")
-print("=" * 70)
 
-data = {
-    "MaHD": ["HD01", "HD02", "HD03", "HD04", "HD05", "HD06", "HD07", "HD08", "HD09", "HD10"],
-    "NgayBan": ["2026-04-01", "2026-04-01", "2026-04-02", "2026-04-02", "2026-04-03", "2026-04-03", "2026-04-04", "2026-04-04", "2026-04-05", "2026-04-05"],
-    "TenSP": ["Laptop", "Chuot", "Man hinh", "USB", "Loa", "Tai nghe", "Laptop", "Webcam", "Ban phim", "Man hinh"],
-    "SoLuong": [1, 5, 2, 10, 3, 4, 1, 2, 6, 1],
-    "DonGia": [14500000, 150000, 2500000, 180000, 750000, 450000, 14500000, 900000, 300000, 2500000],
-    "NhanVien": ["An", "Binh", "An", "Chi", "Dung", "Ha", "An", "Chi", "Binh", "Ha"]
-}
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "sales.csv"
+threshold = 10_000_000
 
-df = pd.DataFrame(data)
-df["ThanhTien"] = df["SoLuong"] * df["DonGia"]
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    df = pd.read_csv(path)
 
-print("\n5 hóa đơn có giá trị cao nhất:")
-print(df.sort_values(by="ThanhTien", ascending=False).head(5))
+    possible_rev_cols = ["DoanhThu", "Revenue", "ThanhTien", "TongTien"]
+    rev_col = next((c for c in possible_rev_cols if c in df.columns), None)
 
-print("\nHóa đơn có ThanhTien >= 3000000:")
-print(df[df["ThanhTien"] >= 3000000])
+    if rev_col is None:
+        print("Khong tim thay cot doanh thu")
+    else:
+        high_sales = df[df[rev_col] > threshold].copy()
 
-print("\nTổng doanh thu:", df["ThanhTien"].sum())
+        out_csv = BASE_DIR / "high_sales.csv"
+        out_xlsx = BASE_DIR / "high_sales.xlsx"
+
+        high_sales.to_csv(out_csv, index=False, encoding="utf-8-sig")
+        high_sales.to_excel(out_xlsx, index=False)
+
+        print("=== Bai 8: Xuat du lieu ===")
+        print(f"Nguong doanh thu: {threshold}")
+        print(f"So don hang dat dieu kien: {len(high_sales)}")
+        print(f"Da luu: {out_csv.name}, {out_xlsx.name}")

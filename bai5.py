@@ -1,42 +1,41 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 5: DỮ LIỆU KHẢO SÁT HỌC TẬP")
-print("=" * 70)
 
-data = {
-    "MaSV": ["SV01", "SV02", "SV03", "SV04", "SV05", "SV06", "SV07", "SV08", "SV09", "SV10"],
-    "GioTuHoc": [3, 2, 1, 4, 2.5, 1.5, 3.5, 2, 1, 4],
-    "SoBuoiNghi": [1, 2, 4, 0, 1, 3, 0, 2, 5, 1],
-    "DiemCC": [9, 8, 6, 10, 8, 6, 9, 8, 5, 10],
-    "DiemCuoiKy": [8, 7.5, 6, 9, 8, 6.5, 8.5, 7, 5.5, 9]
-}
+BASE_DIR = Path(__file__).parent
 
-df = pd.DataFrame(data)
 
-df["DiemTB"] = 0.3 * df["DiemCC"] + 0.7 * df["DiemCuoiKy"]
+def read_with_fallback(path: Path, encodings: list[str]) -> pd.DataFrame | None:
+    for enc in encodings:
+        try:
+            df = pd.read_csv(path, encoding=enc)
+            print(f"Doc thanh cong {path.name} voi encoding='{enc}'")
+            return df
+        except UnicodeDecodeError as exc:
+            print(f"Thu encoding='{enc}' that bai: {exc}")
+    return None
 
-def nhom_hoc_tap(row):
-    if row["GioTuHoc"] >= 3 and row["SoBuoiNghi"] <= 1:
-        return "Tich cuc"
-    elif row["GioTuHoc"] >= 2 and row["SoBuoiNghi"] <= 2:
-        return "Binh thuong"
-    else:
-        return "Can ho tro"
 
-df["NhomHocTap"] = df.apply(nhom_hoc_tap, axis=1)
+utf8_path = BASE_DIR / "sinhvien_utf8.csv"
+ansi_path = BASE_DIR / "sinhvien_ansi.csv"
 
-print("\nDataFrame khảo sát học tập:")
-print(df)
+print("=== Bai 5: Loi ma hoa tieng Viet ===")
 
-print("\nSinh viên tự học > 2 giờ và nghỉ <= 2 buổi:")
-print(df[(df["GioTuHoc"] > 2) & (df["SoBuoiNghi"] <= 2)])
+if utf8_path.exists():
+    df_utf8 = read_with_fallback(utf8_path, ["utf-8", "utf-8-sig", "cp1258", "latin1"])
+    if df_utf8 is not None:
+        print(df_utf8.head())
+else:
+    print(f"[ERROR] Khong tim thay file: {utf8_path.name}")
 
-print("\nNhận xét:")
-print("- Những sinh viên học tự học nhiều và nghỉ ít thường có DiemTB cao.")
-print("- Nhóm tích cực thường đạt kết quả tốt nhất.")
-print("- Nhóm bình thường vẫn có thể đạt điểm khá nếu duy trì chuyên cần.")
-print("- Nhóm cần hỗ trợ có giờ tự học thấp và số buổi nghỉ nhiều.")
-print("- Dữ liệu cho thấy tự học đều và chuyên cần giúp nâng cao điểm.")
+if ansi_path.exists():
+    df_ansi = read_with_fallback(ansi_path, ["cp1258", "latin1", "utf-8", "utf-8-sig"])
+    if df_ansi is not None:
+        print(df_ansi.head())
+else:
+    print(f"[ERROR] Khong tim thay file: {ansi_path.name}")
 
-print("\n" + "=" * 70)
+print(
+    "Nhan xet: UTF-8 pho bien tren web/API, con ANSI (Windows-1258) thuong gap o file cu tren Windows."
+)

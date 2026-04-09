@@ -1,26 +1,18 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 1: LÀM QUEN VỚI SERIES")
-print("=" * 70)
 
-# Tạo Series lưu điểm của 5 sinh viên với chỉ mục mã sinh viên
-diem = pd.Series(
-    [7.5, 8.0, 6.5, 9.0, 8.5],
-    index=["SV01", "SV02", "SV03", "SV04", "SV05"],
-    name="Diem"
-)
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "students.csv"
 
-print("\nDanh sách điểm:")
-print(diem)
-
-print("\nHai phần tử đầu:")
-print(diem.head(2))
-
-print("\nĐiểm lớn nhất:", diem.max())
-print("Điểm trung bình:", diem.mean())
-
-print("\nSinh viên có điểm >= 8:")
-print(diem[diem >= 8])
-
-print("\n" + "=" * 70)
+if not path.exists():
+	print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+	df = pd.read_csv(path)
+	print("=== Bai 1: students.csv ===")
+	print("5 dong dau:")
+	print(df.head())
+	print(f"So dong: {df.shape[0]}")
+	print(f"So cot: {df.shape[1]}")
+	print("Ten cac cot:", list(df.columns))

@@ -1,25 +1,24 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 7: QUẢN LÝ DANH SÁCH SẢN PHẨM")
-print("=" * 70)
 
-data = {
-    "MaSP": ["SP01", "SP02", "SP03", "SP04", "SP05", "SP06", "SP07", "SP08"],
-    "TenSP": ["Chuot", "Ban phim", "Man hinh", "USB", "Laptop", "Loa", "Tai nghe", "Webcam"],
-    "LoaiHang": ["Phu kien", "Phu kien", "Thiet bi", "Phu kien", "Thiet bi", "Thiet bi", "Phu kien", "Thiet bi"],
-    "DonGia": [150000, 300000, 2500000, 180000, 14500000, 750000, 450000, 900000],
-    "SoLuongTon": [25, 18, 7, 40, 5, 12, 20, 8]
-}
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "inventory.xlsx"
 
-df = pd.DataFrame(data)
-df["GiaTriTonKho"] = df["DonGia"] * df["SoLuongTon"]
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    sheet_names = ["HangHoa", "NhapKho", "XuatKho"]
+    sheets = pd.read_excel(path, sheet_name=sheet_names)
 
-print("\nSản phẩm có DonGia > 500000:")
-print(df[df["DonGia"] > 500000])
+    print("=== Bai 7: inventory.xlsx / nhieu sheet ===")
+    for name, df in sheets.items():
+        print(f"\nSheet: {name}")
+        print(f"Shape: {df.shape}")
+        print("Columns:", list(df.columns))
 
-print("\nSản phẩm sắp xếp theo GiaTriTonKho giảm dần:")
-print(df.sort_values(by="GiaTriTonKho", ascending=False))
-
-print("\nSản phẩm có SoLuongTon < 10:")
-print(df[df["SoLuongTon"] < 10])
+    print("\nMo ta chuc nang tung sheet:")
+    print("- HangHoa: Danh muc hang hoa va ton kho hien tai")
+    print("- NhapKho: Cac giao dich nhap hang vao kho")
+    print("- XuatKho: Cac giao dich xuat hang khoi kho")

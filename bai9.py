@@ -1,35 +1,30 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 9: PHÂN LOẠI KHÁCH HÀNG THEO GIÁ TRỊ MUA HÀNG")
-print("=" * 70)
 
-data = {
-    "MaKH": ["KH01", "KH02", "KH03", "KH04", "KH05", "KH06", "KH07", "KH08"],
-    "TenKH": ["Lan", "Minh", "Hung", "Ha", "Phuong", "Toan", "Ngoc", "Tuan"],
-    "SoDonHang": [12, 5, 8, 15, 4, 10, 6, 3],
-    "TongChiTieu": [25000000, 7200000, 12500000, 31000000, 4300000, 9800000, 15000000, 2800000]
-}
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "products.json"
 
-df = pd.DataFrame(data)
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    df_raw = pd.read_json(path)
 
-def xep_loai(tien):
-    if tien >= 20000000:
-        return "VIP"
-    elif tien >= 10000000:
-        return "Than thiet"
-    elif tien >= 5000000:
-        return "Tiem nang"
+    if df_raw.shape[1] == 1 and isinstance(df_raw.iloc[0, 0], (dict, list)):
+        df = pd.json_normalize(df_raw.iloc[:, 0])
     else:
-        return "Thuong"
+        df = df_raw.copy()
 
-print("\nTạo cột XepLoaiKH:")
-df["XepLoaiKH"] = df["TongChiTieu"].apply(xep_loai)
+    print("=== Bai 9: products.json ===")
+    basic_cols = ["MaSP", "TenSP", "NhomHang", "Gia"]
+    show_cols = [c for c in basic_cols if c in df.columns]
 
-print("\nKhách hàng VIP và Than thiet:")
-print(df[df["XepLoaiKH"].isin(["VIP", "Than thiet"])])
+    if show_cols:
+        print(df[show_cols].head())
+    else:
+        print(df.head())
 
-print("\nDanh sách sắp xếp theo TongChiTieu giảm dần:")
-print(df.sort_values(by="TongChiTieu", ascending=False))
-
-print("\nChi tiêu trung bình của khách hàng:", df["TongChiTieu"].mean())
+    print("\nNhan xet:")
+    print("- JSON linh hoat, co the long nhau (nested)")
+    print("- CSV la dang bang phang, de xem nhanh tren bang tinh")

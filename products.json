@@ -1,0 +1,26 @@
+[
+  {
+    "MaSP": "P001",
+    "TenSP": "Laptop A",
+    "NhomHang": "May tinh",
+    "Gia": 18500000
+  },
+  {
+    "MaSP": "P002",
+    "TenSP": "Chuot B",
+    "NhomHang": "Phu kien",
+    "Gia": 180000
+  },
+  {
+    "MaSP": "P003",
+    "TenSP": "Ban phim C",
+    "NhomHang": "Phu kien",
+    "Gia": 450000
+  },
+  {
+    "MaSP": "P004",
+    "TenSP": "Man hinh D",
+    "NhomHang": "Man hinh",
+    "Gia": 3900000
+  }
+]

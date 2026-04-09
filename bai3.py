@@ -1,24 +1,18 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 3: ĐỌC FILE CSV VÀ KHÁM PHÁ DỮ LIỆU")
-print("=" * 70)
 
-df = pd.read_csv("diem_sinhvien.csv")
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "scores_no_header.csv"
 
-print("\n5 dòng đầu:")
-print(df.head())
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    columns = ["MaSV", "HoTen", "Lop", "DiemQT", "DiemThi"]
+    df = pd.read_csv(path, header=None, names=columns)
 
-print("\n5 dòng cuối:")
-print(df.tail())
-
-print("\nThông tin dữ liệu:")
-print(df.info())
-
-print("\nThống kê mô tả:")
-print(df.describe(include="all"))
-
-print("\nKích thước dữ liệu:", df.shape)
-print("Tên các cột:", df.columns.tolist())
-
-print("\n" + "=" * 70)
+    print("=== Bai 3: scores_no_header.csv ===")
+    print(df.head())
+    print("\nThong tin du lieu:")
+    df.info()

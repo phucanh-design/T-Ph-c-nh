@@ -1,27 +1,24 @@
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 2: TẠO DATAFRAME TỪ DICT")
-print("=" * 70)
 
-data = {
-    "MaSV": ["SV01", "SV02", "SV03", "SV04", "SV05"],
-    "HoTen": ["An", "Bình", "Chi", "Dũng", "Hà"],
-    "Lop": ["CNTT1", "CNTT1", "CNTT2", "CNTT2", "CNTT1"],
-    "DiemQT": [7.0, 8.5, 6.0, 9.0, 8.0],
-    "DiemThi": [7.5, 8.0, 6.5, 9.5, 8.5]
-}
+BASE_DIR = Path(__file__).parent
+path = BASE_DIR / "sales_semicolon.csv"
 
-df = pd.DataFrame(data)
+if not path.exists():
+    print(f"[ERROR] Khong tim thay file: {path.name}")
+else:
+    print("=== Bai 2: sales_semicolon.csv ===")
 
-print("\nDataFrame ban đầu:")
-print(df)
+    df_wrong = pd.read_csv(path)
+    print("\nDoc sai sep (mac dinh dau phay):")
+    print(df_wrong.head())
+    print("Cot doc sai:", list(df_wrong.columns))
 
-print("\nChọn cột HoTen và DiemThi:")
-print(df[["HoTen", "DiemThi"]])
+    df_right = pd.read_csv(path, sep=";")
+    print("\nDoc dung sep=';':")
+    print(df_right.head())
+    print("Cot doc dung:", list(df_right.columns))
 
-print("\nThêm cột DiemTB:")
-df["DiemTB"] = 0.4 * df["DiemQT"] + 0.6 * df["DiemThi"]
-print(df)
-
-print("\n" + "=" * 70)
+    print("\nGiai thich: khi sep sai, pandas khong tach duoc cac truong nen ca dong bi don vao 1 cot.")

@@ -1,24 +1,30 @@
+import sqlite3
+from pathlib import Path
+
 import pandas as pd
 
-print("=" * 70)
-print("BÀI 10: THEO DÕI DOANH THU THEO NHÂN VIÊN BÁN HÀNG")
-print("=" * 70)
 
-data = {
-    "MaHD": ["HD01", "HD02", "HD03", "HD04", "HD05", "HD06", "HD07", "HD08", "HD09", "HD10", "HD11", "HD12"],
-    "NhanVien": ["An", "Binh", "Chi", "An", "Dung", "Chi", "An", "Binh", "Dung", "Chi", "An", "Binh"],
-    "SoLuong": [1, 5, 2, 3, 1, 4, 2, 6, 1, 2, 1, 3],
-    "DonGia": [14500000, 150000, 2500000, 750000, 900000, 450000, 300000, 180000, 2500000, 900000, 14500000, 300000]
-}
+BASE_DIR = Path(__file__).parent
+db_path = BASE_DIR / "shop.db"
 
-df = pd.DataFrame(data)
-df["DoanhThu"] = df["SoLuong"] * df["DonGia"]
+if not db_path.exists():
+    print(f"[ERROR] Khong tim thay file: {db_path.name}")
+else:
+    with sqlite3.connect(db_path) as conn:
+        orders = pd.read_sql("SELECT * FROM orders", conn)
 
-tong_nv = df.groupby("NhanVien")["DoanhThu"].sum().reset_index()
-tong_nv = tong_nv.sort_values(by="DoanhThu", ascending=False)
+    print("=== Bai 10: SQLite + pandas.read_sql ===")
+    print("5 ban ghi dau:")
+    print(orders.head())
 
-print("\nTổng doanh thu theo nhân viên:")
-print(tong_nv)
+    total_orders = len(orders)
+    print(f"Tong so don hang: {total_orders}")
 
-print("\nNhân viên có doanh thu cao nhất:")
-print(tong_nv.iloc[0])
+    possible_rev_cols = ["DoanhThu", "Revenue", "TotalAmount", "TongTien"]
+    rev_col = next((c for c in possible_rev_cols if c in orders.columns), None)
+
+    if rev_col is None:
+        print("Khong tim thay cot doanh thu de tinh tong")
+    else:
+        total_revenue = orders[rev_col].sum()
+        print(f"Tong doanh thu ({rev_col}): {total_revenue}")
