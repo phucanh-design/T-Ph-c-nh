@@ -1,0 +1,10 @@
+﻿student_id,full_name,class_name,gender,birth_date,email,phone,score_python,attendance_rate,tuition_status,level
+SV001,Nguyen Van An,CNTT 1,Nam,2004-12-01,an01@eaut.edu.vn,0912345678,8.5,92.0,Da nop,Giỏi
+SV002,Tran Thi Binh,CNTT 1,Nữ,,binh02@eaut.edu.vn,0988123456,7.2,88.0,Chua nop,Khá
+SV003,Le Van Cuong,CNTT 2,Nam,,cuong03@email.com,,9.1,95.0,Da nop,Giỏi
+SV004,Pham Thi Dung,CNTT 2,Không rõ,,dung04@email.com,0912567890,6.8,79.0,Da nop,Khá
+SV005,Hoang Minh Duc,CNTT 3,Nam,2004-02-11,duc05@email.com,0977555333,7.9,85.0,Da nop,Khá
+SV006,Vu Thi Ha,CNTT 3,Nữ,,ha06@email,0966888777,5.4,61.0,Chua nop,Trung bình
+SV007,Doan Quoc Huy,CNTT 1,Nam,,huy07@email.com,0933444555,7.9,98.0,Da nop,Khá
+SV008,Bui Thu Linh,CNTT 2,Nữ,,linh08@email.com,0944333222,8.0,85.0,Da nop,Khá
+SV009,Nguyen Van Nam,CNTT 1,Nam,2004-10-10,nam09@email.com,0911112222,7.9,82.0,Tre han,Khá
